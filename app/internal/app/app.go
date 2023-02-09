@@ -2,8 +2,6 @@ package app
 
 import (
 	"context"
-	UserHttp "electronic_diary/app/internal/domain/user/delivery/http"
-	UserUC "electronic_diary/app/internal/domain/user/usecase"
 	"errors"
 	"fmt"
 	"net"
@@ -11,6 +9,7 @@ import (
 	"os"
 
 	"electronic_diary/app/internal/config"
+	httpController "electronic_diary/app/internal/controller/http"
 	"electronic_diary/app/pkg/client/gorm_postgesql"
 	"electronic_diary/app/pkg/logging"
 
@@ -42,18 +41,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 	)
 	pgClient := gorm_postgesql.NewClient(pgConfig)
 
-	// Init useCases
-	userUC := UserUC.NewUserUseCase(pgClient)
-
-	// Init handlers
-	handlers := UserHttp.NewUserHandlers(userUC)
-
-	// Init routing
-	api := router.Group("/api")
-
-	usersGroup := api.Group("/users")
-
-	UserHttp.MapUserRoutes(usersGroup, handlers)
+	httpController.InitControllers(router, pgClient)
 
 	return App{
 		cfg:    cfg,
