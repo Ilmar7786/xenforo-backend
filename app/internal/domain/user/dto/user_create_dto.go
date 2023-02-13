@@ -1,6 +1,9 @@
 package dto
 
-import validation "github.com/go-ozzo/ozzo-validation"
+import (
+	validation "github.com/go-ozzo/ozzo-validation"
+	"github.com/go-ozzo/ozzo-validation/is"
+)
 
 type UserCreateDTO struct {
 	Email    string `json:"email"`
@@ -11,14 +14,16 @@ type UserCreateDTO struct {
 func (u UserCreateDTO) Validate() error {
 	return validation.ValidateStruct(&u,
 		validation.Field(&u.Email,
-			validation.Required.Error(emailRequiredError),
+			validation.Required,
+			is.Email,
 		),
 		validation.Field(&u.Name,
-			validation.Required.Error("Введите имя"),
+			validation.Required,
+			validation.Length(2, 20),
 		),
 		validation.Field(&u.Password,
-			validation.Required.Error("Введите пароль"),
-			validation.Length(8, 18).Error("Пароль должен содержать от 8 до 18 символов"),
+			validation.Required,
+			validation.Length(8, 18),
 		),
 	)
 }

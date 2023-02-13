@@ -33,4 +33,4 @@ postgresql:
   port: "5432"
   username: postgres
   password: " "
-  database: electronic_school_diary
+  database: xenforo

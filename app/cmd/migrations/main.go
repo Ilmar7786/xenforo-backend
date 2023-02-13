@@ -3,10 +3,9 @@ package main
 import (
 	"context"
 	"electronic_diary/app/internal/config"
+	"electronic_diary/app/internal/domain/user/model"
 	"electronic_diary/app/pkg/client/gorm_postgesql"
 	"electronic_diary/app/pkg/logging"
-
-	teacher "electronic_diary/app/internal/domain/teacher/model"
 )
 
 func main() {
@@ -24,7 +23,7 @@ func main() {
 	pgClient := gorm_postgesql.NewClient(pgConfig)
 
 	logging.Info(ctx, "start migrations")
-	err := pgClient.AutoMigrate(&teacher.Teacher{})
+	err := pgClient.AutoMigrate(&model.User{})
 
 	if err != nil {
 		logging.Error(ctx, err)
