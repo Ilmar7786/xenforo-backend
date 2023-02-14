@@ -52,8 +52,8 @@ func (u *UserUC) Update(id string, userDto dto.UserUpdateDTO) (*model.User, erro
 	return nil, nil
 }
 
-func (u *UserUC) Delete(id string) error {
-	return nil
+func (u *UserUC) Delete(id string) (bool, error) {
+	return false, nil
 }
 
 func (u *UserUC) FindByEmail(email string) (*model.User, bool) {

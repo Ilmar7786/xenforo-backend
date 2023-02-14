@@ -1,4 +1,4 @@
-package main
+package app
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"electronic_diary/app/pkg/logging"
 )
 
-func main() {
+func init() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 

@@ -1,4 +1,4 @@
-package json
+package validate
 
 import (
 	"net/http"
@@ -7,9 +7,9 @@ import (
 	validation "github.com/go-ozzo/ozzo-validation"
 )
 
-func ValidateAndParseJSON[T validation.Validatable](c *gin.Context) (T, error) {
+func ParseAndValidateJSON[T validation.Validatable](c *gin.Context) (T, error) {
 	var body T
-	if err := c.ShouldBind(&body); err != nil {
+	if err := c.ShouldBindJSON(&body); err != nil {
 		c.JSON(http.StatusBadRequest, err)
 		return body, err
 	}

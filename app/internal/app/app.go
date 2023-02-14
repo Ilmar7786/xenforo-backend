@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	httpControllerV1 "electronic_diary/app/internal/controller/http/v1"
+	"electronic_diary/app/internal/domain/user/usecase"
 	"errors"
 	"fmt"
 	"net"
@@ -9,7 +11,6 @@ import (
 	"os"
 
 	"electronic_diary/app/internal/config"
-	httpController "electronic_diary/app/internal/controller/http"
 	"electronic_diary/app/pkg/client/gorm_postgesql"
 	"electronic_diary/app/pkg/logging"
 
@@ -32,7 +33,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 		}
 		gin.SetMode(gin.ReleaseMode)
 	}
-	router := gin.New()
+	router := gin.Default()
 
 	// Database postgresql
 	pgConfig := gorm_postgesql.NewConfig(
@@ -41,7 +42,11 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 	)
 	pgClient := gorm_postgesql.NewClient(pgConfig)
 
-	httpController.InitControllers(router, pgClient)
+	// UseCases
+	userUC := usecase.NewUserUseCase(pgClient)
+
+	// Controllers
+	httpControllerV1.NewRouter(router, ctx, userUC)
 
 	return App{
 		cfg:    cfg,
