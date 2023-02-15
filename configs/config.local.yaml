@@ -39,5 +39,5 @@ postgresql:
   host: 0.0.0.0
   port: "5432"
   username: postgres
-  password: " "
+  password: develop12+
   database: xenforo

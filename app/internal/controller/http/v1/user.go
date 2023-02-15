@@ -2,14 +2,15 @@ package v1
 
 import (
 	"context"
-	"electronic_diary/app/internal/config"
-	"electronic_diary/app/internal/domain/user"
-	"electronic_diary/app/internal/domain/user/dto"
-	"electronic_diary/app/internal/domain/user/model"
-	"electronic_diary/app/internal/middlewares"
-	"electronic_diary/app/pkg/api/jwt"
-	"electronic_diary/app/pkg/api/validate"
 	"net/http"
+
+	"xenforo/app/internal/config"
+	"xenforo/app/internal/domain/auth/middleware"
+	"xenforo/app/internal/domain/user"
+	"xenforo/app/internal/domain/user/dto"
+	"xenforo/app/internal/domain/user/model"
+	"xenforo/app/pkg/api/jwt"
+	"xenforo/app/pkg/api/validate"
 
 	"github.com/gin-gonic/gin"
 )
@@ -19,7 +20,7 @@ type userRoutes struct {
 	userUC user.UseCase
 }
 
-func newUserRouters(handler *gin.RouterGroup, ctx context.Context, userUC user.UseCase) {
+func newUserRouters(handler *gin.RouterGroup, ctx context.Context, authMiddleware middleware.Init, userUC user.UseCase) {
 	r := userRoutes{
 		ctx:    ctx,
 		userUC: userUC,
@@ -29,8 +30,8 @@ func newUserRouters(handler *gin.RouterGroup, ctx context.Context, userUC user.U
 	{
 		h.POST("/sign-up", r.SignUp)
 		h.POST("/sign-in", r.SignIn)
-		h.GET("/info", middlewares.Auth(ctx, userUC), r.UserInfo)
-		h.PUT("/profile", middlewares.Auth(ctx, userUC), r.UpdateProfile)
+		h.GET("/info", authMiddleware.Auth(), r.UserInfo)
+		h.PUT("/profile", authMiddleware.Auth(), r.UpdateProfile)
 	}
 }
 
@@ -90,11 +91,11 @@ func (r *userRoutes) SignUp(c *gin.Context) {
 }
 
 func (r *userRoutes) UpdateProfile(c *gin.Context) {
-	currentUser := c.MustGet("currentUser").(model.User)
+	currentUser := c.MustGet("user").(model.User)
 	c.JSON(http.StatusOK, currentUser)
 }
 
 func (r *userRoutes) UserInfo(c *gin.Context) {
-	currentUser := c.MustGet("currentUser").(model.User)
+	currentUser := c.MustGet("user").(model.User)
 	c.JSON(http.StatusOK, currentUser)
 }

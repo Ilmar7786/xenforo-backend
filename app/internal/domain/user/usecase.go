@@ -1,8 +1,8 @@
 package user
 
 import (
-	"electronic_diary/app/internal/domain/user/dto"
-	"electronic_diary/app/internal/domain/user/model"
+	"xenforo/app/internal/domain/user/dto"
+	"xenforo/app/internal/domain/user/model"
 )
 
 type UseCase interface {

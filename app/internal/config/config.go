@@ -2,11 +2,12 @@ package config
 
 import (
 	"context"
-	"electronic_diary/app/pkg/logging"
 	"flag"
 	"os"
 	"sync"
 	"time"
+
+	"xenforo/app/pkg/logging"
 
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"

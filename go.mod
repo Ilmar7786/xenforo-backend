@@ -1,4 +1,4 @@
-module electronic_diary
+module xenforo
 
 go 1.19
 

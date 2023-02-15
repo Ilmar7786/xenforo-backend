@@ -2,15 +2,16 @@ package v1
 
 import (
 	"context"
-	"electronic_diary/app/internal/domain/user"
+
+	"xenforo/app/internal/domain/auth/middleware"
+	"xenforo/app/internal/domain/user"
 
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(handler *gin.Engine, ctx context.Context, userUC user.UseCase) {
-
-	h := handler.Group("/v1")
+func NewRouter(handler *gin.RouterGroup, ctx context.Context, authMiddleware middleware.Init, userUC user.UseCase) {
+	v1 := handler.Group("/v1")
 	{
-		newUserRouters(h, ctx, userUC)
+		newUserRouters(v1, ctx, authMiddleware, userUC)
 	}
 }

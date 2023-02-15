@@ -1,11 +1,12 @@
 package usecase
 
 import (
-	"electronic_diary/app/internal/domain/user"
-	"electronic_diary/app/internal/domain/user/dto"
-	"electronic_diary/app/internal/domain/user/model"
 	"errors"
 	"fmt"
+
+	"xenforo/app/internal/domain/user"
+	"xenforo/app/internal/domain/user/dto"
+	"xenforo/app/internal/domain/user/model"
 
 	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"

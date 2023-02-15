@@ -2,10 +2,11 @@ package app
 
 import (
 	"context"
-	"electronic_diary/app/internal/config"
-	"electronic_diary/app/internal/domain/user/model"
-	"electronic_diary/app/pkg/client/gorm_postgesql"
-	"electronic_diary/app/pkg/logging"
+
+	"xenforo/app/internal/config"
+	"xenforo/app/internal/domain/user/model"
+	"xenforo/app/pkg/client/gorm_postgesql"
+	"xenforo/app/pkg/logging"
 )
 
 func init() {
