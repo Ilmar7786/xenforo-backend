@@ -1,7 +1,6 @@
 package jwt
 
 import (
-	"encoding/base64"
 	"fmt"
 	"time"
 
@@ -9,16 +8,6 @@ import (
 )
 
 func CreateToken(ttl time.Duration, payload interface{}, privateKey string) (string, error) {
-	decodedPrivateKey, err := base64.StdEncoding.DecodeString(privateKey)
-	if err != nil {
-		return "", fmt.Errorf("could not decode key: %w", err)
-	}
-	key, err := jwt.ParseRSAPrivateKeyFromPEM(decodedPrivateKey)
-
-	if err != nil {
-		return "", fmt.Errorf("create: parse key: %w", err)
-	}
-
 	now := time.Now().UTC()
 
 	claims := make(jwt.MapClaims)
@@ -27,7 +16,7 @@ func CreateToken(ttl time.Duration, payload interface{}, privateKey string) (str
 	claims["iat"] = now.Unix()
 	claims["nbf"] = now.Unix()
 
-	token, err := jwt.NewWithClaims(jwt.SigningMethodRS256, claims).SignedString(key)
+	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString([]byte(privateKey))
 
 	if err != nil {
 		return "", fmt.Errorf("create: sign token: %w", err)
@@ -37,22 +26,11 @@ func CreateToken(ttl time.Duration, payload interface{}, privateKey string) (str
 }
 
 func ValidateToken(token string, publicKey string) (interface{}, error) {
-	decodedPublicKey, err := base64.StdEncoding.DecodeString(publicKey)
-	if err != nil {
-		return nil, fmt.Errorf("could not decode: %w", err)
-	}
-
-	key, err := jwt.ParseRSAPublicKeyFromPEM(decodedPublicKey)
-
-	if err != nil {
-		return "", fmt.Errorf("validate: parse key: %w", err)
-	}
-
 	parsedToken, err := jwt.Parse(token, func(t *jwt.Token) (interface{}, error) {
-		if _, ok := t.Method.(*jwt.SigningMethodRSA); !ok {
+		if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("unexpected method: %s", t.Header["alg"])
 		}
-		return key, nil
+		return []byte(publicKey), nil
 	})
 
 	if err != nil {

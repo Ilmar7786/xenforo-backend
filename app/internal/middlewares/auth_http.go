@@ -32,7 +32,7 @@ func Auth(ctx context.Context, userUC user.UseCase) gin.HandlerFunc {
 		}
 
 		cfg := config.GetConfig(ctx)
-		sub, err := jwt.ValidateToken(accessToken, cfg.App.Jwt.AccessTokenPublicKey)
+		sub, err := jwt.ValidateToken(accessToken, cfg.App.Jwt.AccessTokenPrivateKey)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": err.Error()})
 			return
@@ -44,7 +44,7 @@ func Auth(ctx context.Context, userUC user.UseCase) gin.HandlerFunc {
 			return
 		}
 
-		c.Set("currentUser", currentUser)
+		c.Set("currentUser", *currentUser)
 		c.Next()
 	}
 }

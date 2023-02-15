@@ -45,7 +45,13 @@ func (u *UserUC) FindAll() ([]*model.User, error) {
 }
 
 func (u *UserUC) FindByID(id string) (*model.User, error) {
-	return nil, nil
+	var candidateUser model.User
+	result := u.db.Where("id = ?", id).First(&candidateUser)
+	if result.RowsAffected == 0 {
+		return nil, errors.New("user not found")
+	}
+
+	return &candidateUser, nil
 }
 
 func (u *UserUC) Update(id string, userDto dto.UserUpdateDTO) (*model.User, error) {
