@@ -1,15 +1,15 @@
-package main
+package app
 
 import (
 	"context"
-	"electronic_diary/app/internal/config"
-	"electronic_diary/app/pkg/client/gorm_postgesql"
-	"electronic_diary/app/pkg/logging"
 
-	teacher "electronic_diary/app/internal/domain/teacher/model"
+	"xenforo/app/internal/config"
+	"xenforo/app/internal/domain/user/model"
+	"xenforo/app/pkg/client/gorm_postgesql"
+	"xenforo/app/pkg/logging"
 )
 
-func main() {
+func init() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -24,7 +24,7 @@ func main() {
 	pgClient := gorm_postgesql.NewClient(pgConfig)
 
 	logging.Info(ctx, "start migrations")
-	err := pgClient.AutoMigrate(&teacher.Teacher{})
+	err := pgClient.AutoMigrate(&model.User{})
 
 	if err != nil {
 		logging.Error(ctx, err)

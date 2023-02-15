@@ -1,6 +1,13 @@
 ---
 app:
   is-debug: true
+  jwt-token:
+    ACCESS_TOKEN_PRIVATE_KEY: "access_private_key"
+    ACCESS_TOKEN_EXPIRED_IN: 15s
+    ACCESS_TOKEN_MAX_AGE: 1
+    REFRESH_TOKEN_PRIVATE_KEY: "refresh_private_key"
+    REFRESH_TOKEN_EXPIRED_IN: 60m
+    REFRESH_TOKEN_MAX_AGE: 60
 
 http:
   ip: 0.0.0.0
@@ -32,5 +39,5 @@ postgresql:
   host: 0.0.0.0
   port: "5432"
   username: postgres
-  password: " "
-  database: electronic_school_diary
+  password: develop12+
+  database: xenforo

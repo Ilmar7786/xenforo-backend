@@ -1,8 +1,8 @@
 package user
 
 import (
-	"electronic_diary/app/internal/domain/user/dto"
-	"electronic_diary/app/internal/domain/user/model"
+	"xenforo/app/internal/domain/user/dto"
+	"xenforo/app/internal/domain/user/model"
 )
 
 type UseCase interface {
@@ -10,5 +10,7 @@ type UseCase interface {
 	FindAll() ([]*model.User, error)
 	FindByID(id string) (*model.User, error)
 	Update(id string, userDto dto.UserUpdateDTO) (*model.User, error)
-	Delete(id string) error
+	Delete(id string) (bool, error)
+	FindByEmail(email string) (*model.User, bool)
+	Authorization(userDto dto.UserAuthorizationDTO) (*model.User, error)
 }

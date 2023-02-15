@@ -2,17 +2,18 @@ package app
 
 import (
 	"context"
-	http2 "electronic_diary/app/internal/domain/user/delivery/http"
-	"electronic_diary/app/internal/domain/user/usecase"
 	"errors"
 	"fmt"
 	"net"
 	"net/http"
 	"os"
 
-	"electronic_diary/app/internal/config"
-	"electronic_diary/app/pkg/client/gorm_postgesql"
-	"electronic_diary/app/pkg/logging"
+	"xenforo/app/internal/config"
+	httpControllerV1 "xenforo/app/internal/controller/http/v1"
+	"xenforo/app/internal/domain/auth/middleware"
+	"xenforo/app/internal/domain/user/usecase"
+	"xenforo/app/pkg/client/gorm_postgesql"
+	"xenforo/app/pkg/logging"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rs/cors"
@@ -26,14 +27,12 @@ type App struct {
 }
 
 func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
-	logging.Info(ctx, "router initializing")
 	if !cfg.App.IsDebug {
 		if err := os.Setenv(gin.EnvGinMode, gin.ReleaseMode); err != nil {
 			logging.Error(ctx, err)
 		}
 		gin.SetMode(gin.ReleaseMode)
 	}
-	router := gin.New()
 
 	// Database postgresql
 	pgConfig := gorm_postgesql.NewConfig(
@@ -42,18 +41,20 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 	)
 	pgClient := gorm_postgesql.NewClient(pgConfig)
 
-	// Init useCases
+	// UseCases
+	logging.Info(ctx, "useCases initializing")
 	userUC := usecase.NewUserUseCase(pgClient)
 
-	// Init handlers
-	handlers := http2.NewUserHandlers(userUC)
+	// Middlewares
+	logging.Info(ctx, "middlewares initializing")
+	authMiddleware := middleware.NewAuth(ctx, cfg.App.Jwt.AccessTokenPrivateKey, userUC)
 
-	// Init routing
-	api := router.Group("/api")
+	// Controllers
+	logging.Info(ctx, "controllers initializing")
+	router := gin.Default()
+	public := router.Group("/api")
 
-	usersGroup := api.Group("/users")
-
-	http2.MapUserRoutes(usersGroup, handlers)
+	httpControllerV1.NewRouter(public, ctx, authMiddleware, userUC)
 
 	return App{
 		cfg:    cfg,

@@ -5,21 +5,16 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
-type UserUpdateDTO struct {
+type UserAuthorizationDTO struct {
 	Email    string `json:"email"`
-	Name     string `json:"name"`
 	Password string `json:"password"`
 }
 
-func (u UserUpdateDTO) Validate() error {
+func (u UserAuthorizationDTO) Validate() error {
 	return validation.ValidateStruct(&u,
 		validation.Field(&u.Email,
 			validation.Required,
 			is.Email,
-		),
-		validation.Field(&u.Name,
-			validation.Required,
-			validation.Length(2, 20),
 		),
 		validation.Field(&u.Password,
 			validation.Required,

@@ -2,9 +2,10 @@ package main
 
 import (
 	"context"
-	"electronic_diary/app/internal/app"
-	"electronic_diary/app/internal/config"
-	"electronic_diary/app/pkg/logging"
+
+	"xenforo/app/internal/app"
+	"xenforo/app/internal/config"
+	"xenforo/app/pkg/logging"
 )
 
 func main() {

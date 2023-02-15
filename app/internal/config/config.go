@@ -2,11 +2,12 @@ package config
 
 import (
 	"context"
-	"electronic_diary/app/pkg/logging"
 	"flag"
 	"os"
 	"sync"
 	"time"
+
+	"xenforo/app/pkg/logging"
 
 	"github.com/ilyakaznacheev/cleanenv"
 	"github.com/joho/godotenv"
@@ -15,6 +16,14 @@ import (
 type Config struct {
 	App struct {
 		IsDebug bool `yaml:"is-debug" env-default:"false"`
+		Jwt     struct {
+			AccessTokenPrivateKey  string        `yaml:"ACCESS_TOKEN_PRIVATE_KEY"`
+			AccessTokenExpiredIn   time.Duration `yaml:"ACCESS_TOKEN_EXPIRED_IN"`
+			AccessTokenMaxAge      int           `yaml:"ACCESS_TOKEN_MAX_AGE"`
+			RefreshTokenPrivateKey string        `yaml:"REFRESH_TOKEN_PRIVATE_KEY"`
+			RefreshTokenExpiredIn  time.Duration `yaml:"REFRESH_TOKEN_EXPIRED_IN"`
+			RefreshTokenMaxAge     int           `yaml:"REFRESH_TOKEN_MAX_AGE"`
+		} `yaml:"jwt-token"`
 	} `yaml:"app"`
 	HTTP struct {
 		IP           string        `yaml:"ip" env:"HTTP_IP" env-default:"0.0.0.0"`
