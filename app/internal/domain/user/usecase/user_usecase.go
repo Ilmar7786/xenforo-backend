@@ -8,7 +8,6 @@ import (
 	"xenforo/app/internal/domain/user/dto"
 	"xenforo/app/internal/domain/user/model"
 
-	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -42,6 +41,8 @@ func (u *UserUC) Create(userDto dto.UserCreateDTO) (*model.User, error) {
 }
 
 func (u *UserUC) FindAll() ([]*model.User, error) {
+	//TODO implement me
+	panic("implement me")
 	return nil, nil
 }
 
@@ -56,10 +57,14 @@ func (u *UserUC) FindByID(id string) (*model.User, error) {
 }
 
 func (u *UserUC) Update(id string, userDto dto.UserUpdateDTO) (*model.User, error) {
+	//TODO implement me
+	panic("implement me")
 	return nil, nil
 }
 
 func (u *UserUC) Delete(id string) (bool, error) {
+	//TODO implement me
+	panic("implement me")
 	return false, nil
 }
 
@@ -88,12 +93,8 @@ func (u *UserUC) Authorization(userDto dto.UserAuthorizationDTO) (*model.User, e
 	return candidateUser, nil
 }
 
-func hashPassword(password string) (string, error) {
-	bytes, err := bcrypt.GenerateFromPassword([]byte(password), 14)
-	return string(bytes), err
-}
-
-func checkPasswordHash(hash, password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password))
-	return err == nil
+func (u *UserUC) BanUser(userID string) (bool, error) {
+	//TODO implement me
+	panic("implement me")
+	return false, nil
 }

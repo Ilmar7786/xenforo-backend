@@ -2,6 +2,7 @@ package model
 
 import (
 	"time"
+	"xenforo/app/internal/domain/list_lock/model"
 )
 
 type User struct {
@@ -13,6 +14,8 @@ type User struct {
 	Password  string    `json:"-" gorm:"not null"`
 	CreatedAt time.Time `json:"createdAt" gorm:"not null"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"not null"`
+
+	ListLocks []model.ListLock `json:"-" gorm:"foreignKey:UserID"`
 }
 
 func (u *User) TableName() string {

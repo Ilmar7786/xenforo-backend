@@ -13,4 +13,5 @@ type UseCase interface {
 	Delete(id string) (bool, error)
 	FindByEmail(email string) (*model.User, bool)
 	Authorization(userDto dto.UserAuthorizationDTO) (*model.User, error)
+	BanUser(userID string) (bool, error)
 }
