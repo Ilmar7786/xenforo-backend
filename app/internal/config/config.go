@@ -47,6 +47,13 @@ type Config struct {
 		Port     string `yaml:"port" env:"PSQL_PORT" env-required:"true"`
 		Database string `yaml:"database" env:"PSQL_DATABASE" env-required:"true"`
 	} `yaml:"postgresql"`
+	Mail struct {
+		From     string `yaml:"from" env:"MAIL_FROM" emv-required:"true"`
+		Password string `yaml:"password" env:"MAIL_PASSWORD" emv-required:"true"`
+		Username string `yaml:"username" env:"MAIL_USERNAME" emv-required:"true"`
+		Host     string `yaml:"host" env:"MAIL_HOST" emv-required:"true"`
+		Port     int    `yaml:"port" env:"MAIL_PORT" emv-required:"true"`
+	} `yaml:"mail"`
 }
 
 const (
