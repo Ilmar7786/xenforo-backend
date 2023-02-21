@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"flag"
+	"log"
 	"os"
 	"sync"
 	"time"
@@ -48,11 +49,12 @@ type Config struct {
 		Database string `yaml:"database" env:"PSQL_DATABASE" env-required:"true"`
 	} `yaml:"postgresql"`
 	Mail struct {
-		From     string `yaml:"from" env:"MAIL_FROM" emv-required:"true"`
-		Password string `yaml:"password" env:"MAIL_PASSWORD" emv-required:"true"`
-		Username string `yaml:"username" env:"MAIL_USERNAME" emv-required:"true"`
-		Host     string `yaml:"host" env:"MAIL_HOST" emv-required:"true"`
-		Port     int    `yaml:"port" env:"MAIL_PORT" emv-required:"true"`
+		From     string `yaml:"from" env:"MAIL_FROM" env-required:"true"`
+		Password string `yaml:"password" env:"MAIL_PASSWORD" env-required:"true"`
+		Username string `yaml:"username" env:"MAIL_USERNAME" env-required:"true"`
+		Host     string `yaml:"host" env:"MAIL_HOST" env-required:"true"`
+		Port     int    `yaml:"port" env:"MAIL_PORT" env-required:"true"`
+		SSL      bool   `yaml:"ssl" env:"MAIL_SSL" default:"true"`
 	} `yaml:"mail"`
 }
 
@@ -88,8 +90,8 @@ func GetConfig(ctx context.Context) *Config {
 
 		if err := cleanenv.ReadConfig(configPath, instance); err != nil {
 			help, _ := cleanenv.GetDescription(instance, nil)
-			logging.Info(ctx, help)
-			logging.Fatal(ctx, err)
+			log.Println(help)
+			log.Fatal(err)
 		}
 	})
 	return instance
