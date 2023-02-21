@@ -39,6 +39,7 @@ func (r *userRoutes) SignIn(c *gin.Context) {
 	cfg := config.GetConfig(r.ctx)
 	body, err := validate.ParseAndValidateJSON[dto.UserAuthorizationDTO](c)
 	if err != nil {
+		errorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
@@ -77,6 +78,7 @@ func (r *userRoutes) SignIn(c *gin.Context) {
 func (r *userRoutes) SignUp(c *gin.Context) {
 	body, err := validate.ParseAndValidateJSON[dto.UserCreateDTO](c)
 	if err != nil {
+		errorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
