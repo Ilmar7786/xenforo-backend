@@ -1,0 +1,59 @@
+version: '3.9'
+services:
+  app:
+    container_name: golang_container
+    environment:
+      - PSQL_HOST=postgres_container
+    env_file:
+      - ./.env
+    tty: true
+    build: .
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    volumes:
+      - .:/app
+    depends_on:
+      - postgresdb
+    networks:
+      - local
+
+  postgresdb:
+    image: postgres:latest
+    container_name: postgres_container
+    env_file:
+      - ./.env
+    environment:
+      - POSTGRES_USER=${PSQL_USER}
+      - POSTGRES_PASSWORD=${PSQL_PASSWORD}
+      - POSTGRES_DB=${PSQL_DATABASE}
+    ports:
+      - "5432:5432"
+    volumes:
+      - local_pgdata:/var/lib/postgresql/data
+    networks:
+      - local
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin4_container
+    env_file:
+      - ./.env
+    restart: always
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: ${PG_ADMIN_EMAIL}
+      PGADMIN_DEFAULT_PASSWORD: ${PG_ADMIN_PASSWORD}
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    networks:
+      - local
+
+volumes:
+  pgadmin-data:
+  local_pgdata:
+
+networks:
+  local:
+    driver: bridge
