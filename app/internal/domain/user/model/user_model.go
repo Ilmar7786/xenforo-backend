@@ -2,7 +2,6 @@ package model
 
 import (
 	"time"
-	"xenforo/app/internal/domain/list_lock/model"
 )
 
 type User struct {
@@ -11,11 +10,10 @@ type User struct {
 	Name      string    `json:"name" gorm:"not null"`
 	IsAdmin   bool      `json:"isAdmin" gorm:"default: false; not null"`
 	IsBanned  bool      `json:"isBanned"  gorm:"default: false; not null"`
+	IsEmail   bool      `json:"isEmail"  gorm:"default: false; not null"`
 	Password  string    `json:"-" gorm:"not null"`
 	CreatedAt time.Time `json:"createdAt" gorm:"not null"`
 	UpdatedAt time.Time `json:"updatedAt" gorm:"not null"`
-
-	ListLocks []model.ListLock `json:"-" gorm:"foreignKey:UserID"`
 }
 
 func (u *User) TableName() string {

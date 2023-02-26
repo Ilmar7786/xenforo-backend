@@ -5,7 +5,7 @@ import (
 )
 
 type response struct {
-	Error interface{} `json:"error" example:"message"`
+	Error interface{} `json:"errors" example:"message"`
 }
 
 func errorResponse(c *gin.Context, code int, msg interface{}) {

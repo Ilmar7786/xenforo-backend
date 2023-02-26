@@ -4,7 +4,7 @@ import (
 	"context"
 
 	"xenforo/app/internal/config"
-	ListLockModel "xenforo/app/internal/domain/list_lock/model"
+	MailModel "xenforo/app/internal/domain/mail/model"
 	UserModel "xenforo/app/internal/domain/user/model"
 	"xenforo/app/pkg/client/gorm_postgesql"
 	"xenforo/app/pkg/logging"
@@ -25,7 +25,7 @@ func init() {
 	pgClient := gorm_postgesql.NewClient(pgConfig)
 
 	logging.Info(ctx, "start migrations")
-	err := pgClient.AutoMigrate(&UserModel.User{}, ListLockModel.ListLock{})
+	err := pgClient.AutoMigrate(&UserModel.User{}, MailModel.MailActivate{})
 
 	if err != nil {
 		logging.Error(ctx, err)

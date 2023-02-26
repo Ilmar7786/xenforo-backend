@@ -16,12 +16,12 @@ func (i *Init) AdminAuth() gin.HandlerFunc {
 
 		currentUser, err := i.userUC.FindByID(fmt.Sprint(sub))
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": "Access is denied"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "Not enough rights"})
 			return
 		}
 
 		if !currentUser.IsAdmin {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "The user belonging to this token no logger exists"})
+			c.AbortWithStatusJSON(http.StatusForbidden, gin.H{"status": "fail", "message": "Access is denied"})
 			return
 		}
 

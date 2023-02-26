@@ -2,7 +2,6 @@ package v1
 
 import (
 	"context"
-	"xenforo/app/internal/domain/list_lock"
 
 	"xenforo/app/internal/domain/auth/middleware"
 	"xenforo/app/internal/domain/user"
@@ -11,16 +10,14 @@ import (
 )
 
 type UseCases struct {
-	UserUC     user.UseCase
-	ListLockUC list_lock.UseCase
+	UserUC user.UseCase
 }
 
-func NewRouter(handler *gin.RouterGroup, ctx context.Context, authMiddleware middleware.Init, useCases UseCases) {
-	v1 := handler.Group("/v1")
+func NewRouter(handler *gin.RouterGroup, ctx context.Context, middleware middleware.Init, useCases UseCases) {
+	public := handler.Group("/v1")
+	private := public.Group("/admin")
+	private.Use(middleware.AdminAuth())
 
-	newUserRouters(v1, ctx, authMiddleware, useCases.UserUC)
-
-	private := v1.Group("/admin")
-	newListLockRouters(private, ctx, authMiddleware, useCases.ListLockUC)
-
+	newAdminRoutes(private, ctx, middleware, useCases.UserUC)
+	newUserRouters(public, ctx, middleware, useCases.UserUC)
 }

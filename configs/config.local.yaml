@@ -2,12 +2,10 @@
 app:
   is-debug: true
   jwt-token:
-    ACCESS_TOKEN_PRIVATE_KEY: "access_private_key"
-    ACCESS_TOKEN_EXPIRED_IN: 15m
-    ACCESS_TOKEN_MAX_AGE: 1
-    REFRESH_TOKEN_PRIVATE_KEY: "refresh_private_key"
-    REFRESH_TOKEN_EXPIRED_IN: 43200m #30 day
-    REFRESH_TOKEN_MAX_AGE: 60
+    access-token-key: "access_private_key"
+    access-token-expired-in: 15m
+    refresh-token-key: "refresh_private_key"
+    refresh-token-expired-in: 43200m #30 day
 
 http:
   ip: 0.0.0.0
@@ -38,9 +36,4 @@ http:
 mail:
   ssl: true
 
-postgresql:
-  host: 0.0.0.0
-  port: "5432"
-  username: postgres
-  password: develop12+
-  database: xenforo
+client-url: "http://127.0.0.1:3000"

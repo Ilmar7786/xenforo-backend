@@ -1,25 +1,34 @@
 package usecase
 
 import (
+	"context"
 	"errors"
 	"fmt"
 
+	"xenforo/app/internal/domain/mail"
 	"xenforo/app/internal/domain/user"
 	"xenforo/app/internal/domain/user/dto"
 	"xenforo/app/internal/domain/user/model"
+	"xenforo/app/pkg/logging"
 
 	"gorm.io/gorm"
 )
 
 type UserUC struct {
-	db *gorm.DB
+	db     *gorm.DB
+	mailUC mail.UseCase
+	ctx    context.Context
 }
 
-func NewUserUseCase(db *gorm.DB) user.UseCase {
-	return &UserUC{db: db}
+func NewUserUseCase(ctx context.Context, db *gorm.DB, mailUC mail.UseCase) user.UseCase {
+	return &UserUC{
+		db:     db,
+		mailUC: mailUC,
+		ctx:    ctx,
+	}
 }
 
-func (u *UserUC) Create(userDto dto.UserCreateDTO) (*model.User, error) {
+func (u *UserUC) Registration(userDto dto.UserCreateDTO) (*model.User, error) {
 	_, isUser := u.FindByEmail(userDto.Email)
 	if !isUser {
 		return nil, errors.New(fmt.Sprintf("user with mail %s already exists", userDto.Email))
@@ -30,20 +39,22 @@ func (u *UserUC) Create(userDto dto.UserCreateDTO) (*model.User, error) {
 		return nil, err
 	}
 
-	currentUser := &model.User{
+	currentUser := model.User{
 		Email:    userDto.Email,
 		Name:     userDto.Name,
 		Password: hashedPassword,
 	}
-	u.db.Create(currentUser)
+	result := u.db.Create(&currentUser)
+	if result.Error != nil {
+		return nil, result.Error
+	}
 
-	return currentUser, nil
-}
+	err = u.mailUC.GenerateActivateLink(currentUser.ID, currentUser.Email, userDto.WhereSendLink)
+	if err != nil {
+		logging.Error(u.ctx, err)
+	}
 
-func (u *UserUC) FindAll() ([]*model.User, error) {
-	//TODO implement me
-	panic("implement me")
-	return nil, nil
+	return &currentUser, nil
 }
 
 func (u *UserUC) FindByID(id string) (*model.User, error) {
@@ -54,18 +65,6 @@ func (u *UserUC) FindByID(id string) (*model.User, error) {
 	}
 
 	return &candidateUser, nil
-}
-
-func (u *UserUC) Update(id string, userDto dto.UserUpdateDTO) (*model.User, error) {
-	//TODO implement me
-	panic("implement me")
-	return nil, nil
-}
-
-func (u *UserUC) Delete(id string) (bool, error) {
-	//TODO implement me
-	panic("implement me")
-	return false, nil
 }
 
 func (u *UserUC) FindByEmail(email string) (*model.User, bool) {
@@ -93,8 +92,32 @@ func (u *UserUC) Authorization(userDto dto.UserAuthorizationDTO) (*model.User, e
 	return candidateUser, nil
 }
 
-func (u *UserUC) BanUser(userID string) (bool, error) {
-	//TODO implement me
-	panic("implement me")
-	return false, nil
+func (u *UserUC) BanUser(userDto dto.UserBanDTO) (bool, error) {
+	currentUser, err := u.FindByID(userDto.UserID)
+	if err != nil {
+		return false, err
+	}
+	if currentUser.ID == "" {
+		return false, nil
+	}
+
+	currentUser.IsBanned = userDto.IsBan
+	result := u.db.Save(&currentUser)
+	if result.Error != nil {
+		return false, result.Error
+	}
+
+	return true, nil
+}
+
+func (u *UserUC) ActivateEmail(linkID string) (bool, error) {
+	activate, err := u.mailUC.Activate(linkID)
+	if err != nil {
+		return false, err
+	}
+	if activate {
+		return false, nil
+	}
+
+	return true, nil
 }

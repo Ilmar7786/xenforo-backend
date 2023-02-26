@@ -37,59 +37,53 @@ func newUserRouters(handler *gin.RouterGroup, ctx context.Context, authMiddlewar
 
 func (r *userRoutes) SignIn(c *gin.Context) {
 	cfg := config.GetConfig(r.ctx)
-	body, err := validate.ParseAndValidateJSON[dto.UserAuthorizationDTO](c)
+	input, err := validate.ParseAndValidateJSON[dto.UserAuthorizationDTO](c)
 	if err != nil {
 		errorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	currentUser, err := r.userUC.Authorization(body)
+	currentUser, err := r.userUC.Authorization(input)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		errorResponse(c, http.StatusBadRequest, err)
 	}
 
 	// Generate Tokens
 	accessToken, err := jwt.CreateToken(cfg.App.Jwt.AccessTokenExpiredIn, currentUser.ID, cfg.App.Jwt.AccessTokenPrivateKey)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		errorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
 	refreshToken, err := jwt.CreateToken(cfg.App.Jwt.RefreshTokenExpiredIn, currentUser.ID, cfg.App.Jwt.RefreshTokenPrivateKey)
 	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"status": "fail", "message": err.Error()})
+		errorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	c.SetCookie("access_token", accessToken, cfg.App.Jwt.AccessTokenMaxAge*60, "/", "localhost", false, true)
-	c.SetCookie("refresh_token", refreshToken, cfg.App.Jwt.RefreshTokenMaxAge*60, "/", "localhost", false, true)
-	c.SetCookie("logged_in", "true", cfg.App.Jwt.AccessTokenMaxAge*60, "/", "localhost", false, false)
-
 	c.JSON(http.StatusOK, gin.H{
-		"message": "validated",
+		"user": currentUser,
 		"tokens": gin.H{
 			"access":  accessToken,
 			"refresh": refreshToken,
 		},
-		"user": currentUser,
 	})
 }
 
 func (r *userRoutes) SignUp(c *gin.Context) {
-	body, err := validate.ParseAndValidateJSON[dto.UserCreateDTO](c)
+	input, err := validate.ParseAndValidateJSON[dto.UserCreateDTO](c)
 	if err != nil {
 		errorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	newUser, err := r.userUC.Create(body)
+	newUser, err := r.userUC.Registration(input)
 	if err != nil {
 		errorResponse(c, http.StatusBadRequest, err.Error())
 		return
 	}
 
 	c.JSON(http.StatusOK, newUser)
-
 }
 
 func (r *userRoutes) UpdateProfile(c *gin.Context) {

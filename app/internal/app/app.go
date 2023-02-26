@@ -11,7 +11,7 @@ import (
 	"xenforo/app/internal/config"
 	httpControllerV1 "xenforo/app/internal/controller/http/v1"
 	"xenforo/app/internal/domain/auth/middleware"
-	ListLockUC "xenforo/app/internal/domain/list_lock/usecase"
+	MailUC "xenforo/app/internal/domain/mail/usecase"
 	UserUC "xenforo/app/internal/domain/user/usecase"
 	"xenforo/app/pkg/client/gorm_postgesql"
 	"xenforo/app/pkg/logging"
@@ -44,8 +44,8 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 
 	// UseCases
 	logging.Info(ctx, "useCases initializing")
-	userUC := UserUC.NewUserUseCase(pgClient)
-	listLockUC := ListLockUC.NewListLockUseCase(pgClient)
+	mailUC := MailUC.NewMailUseCase(ctx, cfg, pgClient)
+	userUC := UserUC.NewUserUseCase(ctx, pgClient, mailUC)
 
 	// Middlewares
 	logging.Info(ctx, "middlewares initializing")
@@ -57,8 +57,7 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 	public := router.Group("/api")
 
 	routeUseCases := httpControllerV1.UseCases{
-		UserUC:     userUC,
-		ListLockUC: listLockUC,
+		UserUC: userUC,
 	}
 	httpControllerV1.NewRouter(public, ctx, authMiddleware, routeUseCases)
 

@@ -6,14 +6,14 @@ import (
 )
 
 func ParseAndValidateJSON[T validation.Validatable](c *gin.Context) (T, error) {
-	var body T
-	if err := c.ShouldBindJSON(&body); err != nil {
-		return body, err
+	var input T
+	if err := c.ShouldBindJSON(&input); err != nil {
+		return input, err
 	}
 
-	if err := body.Validate(); err != nil {
-		return body, err
+	if err := input.Validate(); err != nil {
+		return input, err
 	}
 
-	return body, nil
+	return input, nil
 }

@@ -18,12 +18,10 @@ type Config struct {
 	App struct {
 		IsDebug bool `yaml:"is-debug" env-default:"false"`
 		Jwt     struct {
-			AccessTokenPrivateKey  string        `yaml:"ACCESS_TOKEN_PRIVATE_KEY"`
-			AccessTokenExpiredIn   time.Duration `yaml:"ACCESS_TOKEN_EXPIRED_IN"`
-			AccessTokenMaxAge      int           `yaml:"ACCESS_TOKEN_MAX_AGE"`
-			RefreshTokenPrivateKey string        `yaml:"REFRESH_TOKEN_PRIVATE_KEY"`
-			RefreshTokenExpiredIn  time.Duration `yaml:"REFRESH_TOKEN_EXPIRED_IN"`
-			RefreshTokenMaxAge     int           `yaml:"REFRESH_TOKEN_MAX_AGE"`
+			AccessTokenPrivateKey  string        `yaml:"access-token-key"`
+			AccessTokenExpiredIn   time.Duration `yaml:"access-token-expired-in"`
+			RefreshTokenPrivateKey string        `yaml:"refresh-token-key"`
+			RefreshTokenExpiredIn  time.Duration `yaml:"refresh-token-expired-in"`
 		} `yaml:"jwt-token"`
 	} `yaml:"app"`
 	HTTP struct {
@@ -42,20 +40,21 @@ type Config struct {
 		} `yaml:"cors"`
 	} `yaml:"http"`
 	PostgreSQL struct {
-		Username string `yaml:"username" env:"PSQL_USER" env-required:"true"`
-		Password string `yaml:"password" env:"PSQL_PASSWORD" env-required:"true"`
-		Host     string `yaml:"host" env:"PSQL_HOST" env-required:"true"`
-		Port     string `yaml:"port" env:"PSQL_PORT" env-required:"true"`
-		Database string `yaml:"database" env:"PSQL_DATABASE" env-required:"true"`
-	} `yaml:"postgresql"`
+		Username string `env:"PSQL_USER" env-required:"true"`
+		Password string `env:"PSQL_PASSWORD" env-required:"true"`
+		Host     string `env:"PSQL_HOST" env-required:"true"`
+		Port     string `env:"PSQL_PORT" env-required:"true"`
+		Database string `env:"PSQL_DATABASE" env-required:"true"`
+	}
 	Mail struct {
-		From     string `yaml:"from" env:"MAIL_FROM" env-required:"true"`
-		Password string `yaml:"password" env:"MAIL_PASSWORD" env-required:"true"`
-		Username string `yaml:"username" env:"MAIL_USERNAME" env-required:"true"`
-		Host     string `yaml:"host" env:"MAIL_HOST" env-required:"true"`
-		Port     int    `yaml:"port" env:"MAIL_PORT" env-required:"true"`
+		From     string `env:"MAIL_FROM" env-required:"true"`
+		Password string `env:"MAIL_PASSWORD" env-required:"true"`
+		Username string `env:"MAIL_USERNAME" env-required:"true"`
+		Host     string `env:"MAIL_HOST" env-required:"true"`
+		Port     int    `env:"MAIL_PORT" env-required:"true"`
 		SSL      bool   `yaml:"ssl" env:"MAIL_SSL" default:"true"`
 	} `yaml:"mail"`
+	ClientURL string `yaml:"client-url" env:"CLIENT_URL" env-required:"true"`
 }
 
 const (

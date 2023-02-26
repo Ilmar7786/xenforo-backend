@@ -5,7 +5,7 @@
 ## Настройка конфигурации
 Нужно создать файл `.env` и добавить переменные:
 
-    # DATABASE
+    # DATABASE (DEFAULT)
     PSQL_USER="postgres"
     PSQL_PASSWORD="postgres"
     PSQL_PORT="5432"

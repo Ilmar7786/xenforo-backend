@@ -6,9 +6,10 @@ import (
 )
 
 type UserCreateDTO struct {
-	Email    string `json:"email"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
+	Email         string `json:"email"`
+	Name          string `json:"name"`
+	Password      string `json:"password"`
+	WhereSendLink string `json:"whereSendLink"`
 }
 
 func (u UserCreateDTO) Validate() error {
@@ -24,6 +25,10 @@ func (u UserCreateDTO) Validate() error {
 		validation.Field(&u.Password,
 			validation.Required,
 			validation.Length(8, 18),
+		),
+		validation.Field(&u.WhereSendLink,
+			validation.Required,
+			is.URL,
 		),
 	)
 }

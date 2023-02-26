@@ -20,6 +20,11 @@ func (i *Init) Auth() gin.HandlerFunc {
 			return
 		}
 
+		if currentUser.IsBanned {
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "The user is blocked"})
+			return
+		}
+
 		c.Set("user", *currentUser)
 		c.Next()
 	}

@@ -33,7 +33,7 @@ func NewMailer(cfg Config) (*Mailer, error) {
 	}, nil
 }
 
-func (c *Mailer) NewMessage(to, subject, body string) error {
+func (c *Mailer) NewMessage(to, subject, input string) error {
 	m := mail.NewMsg()
 	if err := m.From(c.cfg.From); err != nil {
 		return err
@@ -43,7 +43,7 @@ func (c *Mailer) NewMessage(to, subject, body string) error {
 	}
 
 	m.Subject(subject)
-	m.SetBodyString(mail.TypeTextPlain, body)
+	m.SetBodyString(mail.TypeTextPlain, input)
 
 	if err := c.client.DialAndSend(m); err != nil {
 		return nil
