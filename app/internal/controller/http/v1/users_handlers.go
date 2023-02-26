@@ -14,19 +14,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type userHandlers struct {
+type usersHandler struct {
 	ctx    context.Context
 	userUC user.UseCase
 }
 
-func newUserHandlers(ctx context.Context, userUC user.UseCase) *userHandlers {
-	return &userHandlers{
+func newUserHandler(ctx context.Context, userUC user.UseCase) *usersHandler {
+	return &usersHandler{
 		ctx:    ctx,
 		userUC: userUC,
 	}
 }
 
-func (r *userHandlers) signIn(c *gin.Context) {
+func (r *usersHandler) signIn(c *gin.Context) {
 	cfg := config.GetConfig(r.ctx)
 	input, err := validate.ParseAndValidateJSON[dto.UserAuthorizationDTO](c)
 	if err != nil {
@@ -67,7 +67,7 @@ func (r *userHandlers) signIn(c *gin.Context) {
 	})
 }
 
-func (r *userHandlers) signUp(c *gin.Context) {
+func (r *usersHandler) signUp(c *gin.Context) {
 	input, err := validate.ParseAndValidateJSON[dto.UserCreateDTO](c)
 	if err != nil {
 		errorResponse(c, http.StatusBadRequest, err)
@@ -83,12 +83,12 @@ func (r *userHandlers) signUp(c *gin.Context) {
 	c.JSON(http.StatusOK, newUser)
 }
 
-func (r *userHandlers) updateProfile(c *gin.Context) {
+func (r *usersHandler) updateProfile(c *gin.Context) {
 	currentUser := c.MustGet("user").(model.User)
 	c.JSON(http.StatusOK, currentUser)
 }
 
-func (r *userHandlers) userInfo(c *gin.Context) {
+func (r *usersHandler) userInfo(c *gin.Context) {
 	currentUser := c.MustGet("user").(model.User)
 	c.JSON(http.StatusOK, currentUser)
 }

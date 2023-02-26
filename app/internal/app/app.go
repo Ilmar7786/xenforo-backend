@@ -12,7 +12,9 @@ import (
 	httpControllerV1 "xenforo/app/internal/controller/http/v1"
 	"xenforo/app/internal/domain/auth/middleware"
 	MailUC "xenforo/app/internal/domain/mail/usecase"
+	SportUC "xenforo/app/internal/domain/sport/usecase"
 	UserUC "xenforo/app/internal/domain/user/usecase"
+	"xenforo/app/pkg/client/flashliveSports"
 	"xenforo/app/pkg/client/gorm_postgesql"
 	"xenforo/app/pkg/logging"
 
@@ -42,10 +44,14 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 	)
 	pgClient := gorm_postgesql.NewClient(pgConfig)
 
+	// Clients
+	fsClient := flashliveSports.NewFlashlightSportClient(ctx, cfg.FlashliveSports.Token)
+
 	// UseCases
 	logging.Info(ctx, "useCases initializing")
 	mailUC := MailUC.NewMailUseCase(ctx, cfg, pgClient)
 	userUC := UserUC.NewUserUseCase(ctx, pgClient, mailUC)
+	sportUC := SportUC.NewSportsUseCase(ctx, fsClient)
 
 	// Middlewares
 	logging.Info(ctx, "middlewares initializing")
@@ -57,7 +63,8 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 	public := router.Group("/api")
 
 	routeUseCases := httpControllerV1.UseCases{
-		UserUC: userUC,
+		UserUC:  userUC,
+		SportUC: sportUC,
 	}
 	httpControllerV1.NewRouter(public, ctx, authMiddleware, routeUseCases)
 

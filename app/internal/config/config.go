@@ -39,13 +39,6 @@ type Config struct {
 			Debug              bool     `yaml:"debug"`
 		} `yaml:"cors"`
 	} `yaml:"http"`
-	PostgreSQL struct {
-		Username string `env:"PSQL_USER" env-required:"true"`
-		Password string `env:"PSQL_PASSWORD" env-required:"true"`
-		Host     string `env:"PSQL_HOST" env-required:"true"`
-		Port     string `env:"PSQL_PORT" env-required:"true"`
-		Database string `env:"PSQL_DATABASE" env-required:"true"`
-	}
 	Mail struct {
 		From     string `env:"MAIL_FROM" env-required:"true"`
 		Password string `env:"MAIL_PASSWORD" env-required:"true"`
@@ -54,7 +47,17 @@ type Config struct {
 		Port     int    `env:"MAIL_PORT" env-required:"true"`
 		SSL      bool   `yaml:"ssl" env:"MAIL_SSL" default:"true"`
 	} `yaml:"mail"`
-	ClientURL string `yaml:"client-url" env:"CLIENT_URL" env-required:"true"`
+	ClientURL  string `yaml:"client-url" env:"CLIENT_URL" env-required:"true"`
+	PostgreSQL struct {
+		Username string `env:"PSQL_USER" env-required:"true"`
+		Password string `env:"PSQL_PASSWORD" env-required:"true"`
+		Host     string `env:"PSQL_HOST" env-required:"true"`
+		Port     string `env:"PSQL_PORT" env-required:"true"`
+		Database string `env:"PSQL_DATABASE" env-required:"true"`
+	}
+	FlashliveSports struct {
+		Token string `env:"FLASH_LIVE_SPORTS_TOKEN" env-required:"true"`
+	}
 }
 
 const (

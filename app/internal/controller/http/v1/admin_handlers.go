@@ -10,19 +10,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type adminHandlers struct {
+type adminHandler struct {
 	ctx    context.Context
 	userUC user.UseCase
 }
 
-func newAdminHandlers(ctx context.Context, userUC user.UseCase) *adminHandlers {
-	return &adminHandlers{
+func newAdminHandler(ctx context.Context, userUC user.UseCase) *adminHandler {
+	return &adminHandler{
 		ctx:    ctx,
 		userUC: userUC,
 	}
 }
 
-func (r *adminHandlers) userBan(c *gin.Context) {
+func (r *adminHandler) userBan(c *gin.Context) {
 	userID := c.Param("id")
 
 	var input dto.UserBanDTO
