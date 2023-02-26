@@ -4,31 +4,25 @@ import (
 	"context"
 	"net/http"
 
-	"xenforo/app/internal/domain/auth/middleware"
 	"xenforo/app/internal/domain/user"
 	"xenforo/app/internal/domain/user/dto"
 
 	"github.com/gin-gonic/gin"
 )
 
-type adminRoutes struct {
+type adminHandlers struct {
 	ctx    context.Context
 	userUC user.UseCase
 }
 
-func newAdminRoutes(handler *gin.RouterGroup, ctx context.Context, middleware middleware.Init, userUC user.UseCase) {
-	r := adminRoutes{
+func newAdminHandlers(ctx context.Context, userUC user.UseCase) *adminHandlers {
+	return &adminHandlers{
 		ctx:    ctx,
 		userUC: userUC,
 	}
-
-	users := handler.Group("/users")
-	{
-		users.PUT("/:id/ban", r.UserBan)
-	}
 }
 
-func (r *adminRoutes) UserBan(c *gin.Context) {
+func (r *adminHandlers) userBan(c *gin.Context) {
 	userID := c.Param("id")
 
 	var input dto.UserBanDTO

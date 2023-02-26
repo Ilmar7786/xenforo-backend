@@ -5,7 +5,6 @@ import (
 	"net/http"
 
 	"xenforo/app/internal/config"
-	"xenforo/app/internal/domain/auth/middleware"
 	"xenforo/app/internal/domain/user"
 	"xenforo/app/internal/domain/user/dto"
 	"xenforo/app/internal/domain/user/model"
@@ -15,27 +14,19 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-type userRoutes struct {
+type userHandlers struct {
 	ctx    context.Context
 	userUC user.UseCase
 }
 
-func newUserRouters(handler *gin.RouterGroup, ctx context.Context, authMiddleware middleware.Init, userUC user.UseCase) {
-	r := userRoutes{
+func newUserHandlers(ctx context.Context, userUC user.UseCase) *userHandlers {
+	return &userHandlers{
 		ctx:    ctx,
 		userUC: userUC,
 	}
-
-	h := handler.Group("/users")
-	{
-		h.POST("/sign-up", r.SignUp)
-		h.POST("/sign-in", r.SignIn)
-		h.GET("/info", authMiddleware.Auth(), r.UserInfo)
-		h.PUT("/profile", authMiddleware.Auth(), r.UpdateProfile)
-	}
 }
 
-func (r *userRoutes) SignIn(c *gin.Context) {
+func (r *userHandlers) signIn(c *gin.Context) {
 	cfg := config.GetConfig(r.ctx)
 	input, err := validate.ParseAndValidateJSON[dto.UserAuthorizationDTO](c)
 	if err != nil {
@@ -49,13 +40,19 @@ func (r *userRoutes) SignIn(c *gin.Context) {
 	}
 
 	// Generate Tokens
-	accessToken, err := jwt.CreateToken(cfg.App.Jwt.AccessTokenExpiredIn, currentUser.ID, cfg.App.Jwt.AccessTokenPrivateKey)
+	accessToken, err := jwt.CreateToken(
+		cfg.App.Jwt.AccessTokenExpiredIn, currentUser.ID,
+		cfg.App.Jwt.AccessTokenPrivateKey,
+	)
 	if err != nil {
 		errorResponse(c, http.StatusBadRequest, err)
 		return
 	}
 
-	refreshToken, err := jwt.CreateToken(cfg.App.Jwt.RefreshTokenExpiredIn, currentUser.ID, cfg.App.Jwt.RefreshTokenPrivateKey)
+	refreshToken, err := jwt.CreateToken(
+		cfg.App.Jwt.RefreshTokenExpiredIn, currentUser.ID,
+		cfg.App.Jwt.RefreshTokenPrivateKey,
+	)
 	if err != nil {
 		errorResponse(c, http.StatusBadRequest, err)
 		return
@@ -70,7 +67,7 @@ func (r *userRoutes) SignIn(c *gin.Context) {
 	})
 }
 
-func (r *userRoutes) SignUp(c *gin.Context) {
+func (r *userHandlers) signUp(c *gin.Context) {
 	input, err := validate.ParseAndValidateJSON[dto.UserCreateDTO](c)
 	if err != nil {
 		errorResponse(c, http.StatusBadRequest, err)
@@ -86,12 +83,12 @@ func (r *userRoutes) SignUp(c *gin.Context) {
 	c.JSON(http.StatusOK, newUser)
 }
 
-func (r *userRoutes) UpdateProfile(c *gin.Context) {
+func (r *userHandlers) updateProfile(c *gin.Context) {
 	currentUser := c.MustGet("user").(model.User)
 	c.JSON(http.StatusOK, currentUser)
 }
 
-func (r *userRoutes) UserInfo(c *gin.Context) {
+func (r *userHandlers) userInfo(c *gin.Context) {
 	currentUser := c.MustGet("user").(model.User)
 	c.JSON(http.StatusOK, currentUser)
 }
