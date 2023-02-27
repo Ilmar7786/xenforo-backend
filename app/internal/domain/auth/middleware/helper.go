@@ -3,8 +3,7 @@ package middleware
 import (
 	"net/http"
 	"strings"
-
-	"xenforo/app/pkg/api/jwt"
+	"xenforo/app/pkg/api"
 
 	"github.com/gin-gonic/gin"
 )
@@ -27,7 +26,7 @@ func (i *Init) parseToken(c *gin.Context, privateKey string) (interface{}, error
 		return nil, err
 	}
 
-	sub, err := jwt.ValidateToken(accessToken, privateKey)
+	sub, err := api.ValidateToken(accessToken, privateKey)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 		return nil, err

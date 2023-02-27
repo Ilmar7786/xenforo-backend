@@ -3,7 +3,7 @@ package usecase
 import (
 	"xenforo/app/internal/config"
 	"xenforo/app/internal/domain/user/model"
-	"xenforo/app/pkg/api/jwt"
+	"xenforo/app/pkg/api"
 
 	"golang.org/x/crypto/bcrypt"
 )
@@ -19,7 +19,7 @@ func checkPasswordHash(hash, password string) bool {
 }
 
 func generateTokens(thisUser *model.UserAndTokens, cfg *config.Config) error {
-	accessToken, err := jwt.CreateToken(
+	accessToken, err := api.CreateToken(
 		cfg.App.Jwt.AccessTokenExpiredIn, thisUser.ID,
 		cfg.App.Jwt.AccessTokenPrivateKey,
 	)
@@ -27,7 +27,7 @@ func generateTokens(thisUser *model.UserAndTokens, cfg *config.Config) error {
 		return err
 	}
 
-	refreshToken, err := jwt.CreateToken(
+	refreshToken, err := api.CreateToken(
 		cfg.App.Jwt.RefreshTokenExpiredIn, thisUser.ID,
 		cfg.App.Jwt.RefreshTokenPrivateKey,
 	)

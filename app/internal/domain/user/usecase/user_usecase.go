@@ -63,7 +63,7 @@ func (u *UserUC) Registration(userDto dto.UserRegistrationDTO) (*model.UserAndTo
 	err = u.mailUC.GenerateActivateLink(currentUser.ID, currentUser.Email, userDto.RedirectActiveEmail)
 	if err != nil {
 		logging.Error(u.ctx, err)
-		return nil, err
+		return &currentUser, err
 	}
 
 	return &currentUser, nil

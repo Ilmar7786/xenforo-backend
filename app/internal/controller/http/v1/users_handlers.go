@@ -3,11 +3,11 @@ package v1
 import (
 	"context"
 	"net/http"
+	"xenforo/app/pkg/api"
 
 	"xenforo/app/internal/domain/user"
 	"xenforo/app/internal/domain/user/dto"
 	"xenforo/app/internal/domain/user/model"
-	"xenforo/app/pkg/api/validate"
 
 	"github.com/gin-gonic/gin"
 )
@@ -33,7 +33,7 @@ func newUserHandler(ctx context.Context, userUC user.UseCase) *usersHandler {
 // @Failure 400 {object} errorResponse
 // @Router /users/sign-in [post]
 func (r *usersHandler) signIn(c *gin.Context) {
-	input, err := validate.ParseAndValidateJSON[dto.UserAuthorizationDTO](c)
+	input, err := api.ParseAndValidateJSON[dto.UserAuthorizationDTO](c)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -42,6 +42,7 @@ func (r *usersHandler) signIn(c *gin.Context) {
 	currentUser, err := r.userUC.Authorization(input)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
+		return
 	}
 
 	c.JSON(http.StatusOK, currentUser)
@@ -57,7 +58,7 @@ func (r *usersHandler) signIn(c *gin.Context) {
 // @Failure 400 {object} errorResponse
 // @Router /users/sign-up [post]
 func (r *usersHandler) signUp(c *gin.Context) {
-	input, err := validate.ParseAndValidateJSON[dto.UserRegistrationDTO](c)
+	input, err := api.ParseAndValidateJSON[dto.UserRegistrationDTO](c)
 	if err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
 		return
@@ -81,6 +82,7 @@ func (r *usersHandler) signUp(c *gin.Context) {
 // @Param input body dto.UserUpdateDTO true "credentials"
 // @Success 200 {object} model.User
 // @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
 // @Router /users/profile [put]
 func (r *usersHandler) updateProfile(c *gin.Context) {
 	currentUser := c.MustGet("user").(model.User)
@@ -94,6 +96,8 @@ func (r *usersHandler) updateProfile(c *gin.Context) {
 // @Accept json
 // @Produce json
 // @Success 200 {object} model.User
+// @Failure 400 {object} errorResponse
+// @Failure 401 {object} errorResponse
 // @Router /users/info [get]
 func (r *usersHandler) userInfo(c *gin.Context) {
 	currentUser := c.MustGet("user").(model.User)
