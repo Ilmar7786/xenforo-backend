@@ -6,9 +6,9 @@ import (
 )
 
 type UserUpdateDTO struct {
-	Email    string `json:"email"`
-	Name     string `json:"name"`
-	Password string `json:"password"`
+	Email    string `json:"email" minLength:"5" maxLength:"40"`
+	Name     string `json:"name" minLength:"2" maxLength:"20"`
+	Password string `json:"password" minLength:"5" maxLength:"18"`
 }
 
 func (u UserUpdateDTO) Validate() error {
@@ -16,6 +16,7 @@ func (u UserUpdateDTO) Validate() error {
 		validation.Field(&u.Email,
 			validation.Required,
 			is.Email,
+			validation.Length(5, 40),
 		),
 		validation.Field(&u.Name,
 			validation.Required,

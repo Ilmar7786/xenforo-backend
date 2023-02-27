@@ -5,18 +5,19 @@ import (
 	"github.com/go-ozzo/ozzo-validation/is"
 )
 
-type UserCreateDTO struct {
-	Email         string `json:"email"`
-	Name          string `json:"name"`
-	Password      string `json:"password"`
-	WhereSendLink string `json:"whereSendLink"`
+type UserRegistrationDTO struct {
+	Email               string `json:"email" example:"example@mail.ru" minLength:"5" maxLength:"40"`
+	Name                string `json:"name" example:"Иван" minLength:"2" maxLength:"20"`
+	Password            string `json:"password" example:"12345678" minLength:"8" maxLength:"18"`
+	RedirectActiveEmail string `json:"redirectActiveEmail" example:"https://example.ru/email/activate"`
 }
 
-func (u UserCreateDTO) Validate() error {
+func (u UserRegistrationDTO) Validate() error {
 	return validation.ValidateStruct(&u,
 		validation.Field(&u.Email,
 			validation.Required,
 			is.Email,
+			validation.Length(5, 40),
 		),
 		validation.Field(&u.Name,
 			validation.Required,
@@ -26,7 +27,7 @@ func (u UserCreateDTO) Validate() error {
 			validation.Required,
 			validation.Length(8, 18),
 		),
-		validation.Field(&u.WhereSendLink,
+		validation.Field(&u.RedirectActiveEmail,
 			validation.Required,
 			is.URL,
 		),

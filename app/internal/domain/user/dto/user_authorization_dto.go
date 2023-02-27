@@ -6,8 +6,8 @@ import (
 )
 
 type UserAuthorizationDTO struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
+	Email    string `json:"email" example:"example@mail.ru" minLength:"5" maxLength:"40"`
+	Password string `json:"password" example:"12345678" minLength:"5" maxLength:"18"`
 }
 
 func (u UserAuthorizationDTO) Validate() error {
@@ -15,6 +15,7 @@ func (u UserAuthorizationDTO) Validate() error {
 		validation.Field(&u.Email,
 			validation.Required,
 			is.Email,
+			validation.Length(5, 40),
 		),
 		validation.Field(&u.Password,
 			validation.Required,

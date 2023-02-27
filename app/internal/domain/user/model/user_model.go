@@ -16,6 +16,14 @@ type User struct {
 	UpdatedAt time.Time `json:"updatedAt" gorm:"not null"`
 }
 
+type UserAndTokens struct {
+	User
+	Tokens struct {
+		Access  string `json:"access"`
+		Refresh string `json:"refresh"`
+	} `json:"tokens"`
+}
+
 func (u *User) TableName() string {
 	return "users"
 }

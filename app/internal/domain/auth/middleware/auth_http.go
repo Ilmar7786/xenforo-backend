@@ -16,12 +16,12 @@ func (i *Init) Auth() gin.HandlerFunc {
 
 		currentUser, err := i.userUC.FindByID(fmt.Sprint(sub))
 		if err != nil {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "The user belonging to this token no logger exists"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "The user belonging to this token no logger exists"})
 			return
 		}
 
 		if currentUser.IsBanned {
-			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "The user is blocked"})
+			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message, ": "The user is blocked"})
 			return
 		}
 

@@ -23,13 +23,13 @@ func (i *Init) parseToken(c *gin.Context, privateKey string) (interface{}, error
 	}
 
 	if accessToken == "" {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": "You are not logged in"})
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "You are not logged in"})
 		return nil, err
 	}
 
 	sub, err := jwt.ValidateToken(accessToken, privateKey)
 	if err != nil {
-		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"status": "fail", "message": err.Error()})
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": err.Error()})
 		return nil, err
 	}
 

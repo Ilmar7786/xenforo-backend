@@ -8,6 +8,20 @@ import (
 	"xenforo/app/pkg/logging"
 )
 
+// @title           Xenforo API
+// @version         1.0
+// @description     API Documentation Xenforo Server.
+
+// @contact.name   API Support
+// @contact.url    https://t.me/ilya112
+// @contact.email  ilmar7786@yandex.ru
+
+// @securityDefinitions.apikey ApiKeyAuth
+// @in header
+// @name Authorization
+
+// @externalDocs.description  OpenAPI
+// @externalDocs.url          https://swagger.io/resources/open-api/
 func main() {
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()

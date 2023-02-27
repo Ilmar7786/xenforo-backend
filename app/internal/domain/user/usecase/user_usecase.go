@@ -4,7 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
+	"xenforo/app/internal/config"
 	"xenforo/app/internal/domain/mail"
 	"xenforo/app/internal/domain/user"
 	"xenforo/app/internal/domain/user/dto"
@@ -18,20 +18,22 @@ type UserUC struct {
 	db     *gorm.DB
 	mailUC mail.UseCase
 	ctx    context.Context
+	cfg    *config.Config
 }
 
-func NewUserUseCase(ctx context.Context, db *gorm.DB, mailUC mail.UseCase) user.UseCase {
+func NewUserUseCase(ctx context.Context, cfg *config.Config, db *gorm.DB, mailUC mail.UseCase) user.UseCase {
 	return &UserUC{
 		db:     db,
 		mailUC: mailUC,
 		ctx:    ctx,
+		cfg:    cfg,
 	}
 }
 
-func (u *UserUC) Registration(userDto dto.UserCreateDTO) (*model.User, error) {
-	_, isUser := u.FindByEmail(userDto.Email)
-	if !isUser {
-		return nil, errors.New(fmt.Sprintf("user with mail %s already exists", userDto.Email))
+func (u *UserUC) Registration(userDto dto.UserRegistrationDTO) (*model.UserAndTokens, error) {
+	existsUser := u.FindByEmail(userDto.Email)
+	if existsUser != nil {
+		return nil, errors.New(fmt.Sprintf("user with mail %s already existsUser", existsUser.Email))
 	}
 
 	hashedPassword, err := hashPassword(userDto.Password)
@@ -39,57 +41,75 @@ func (u *UserUC) Registration(userDto dto.UserCreateDTO) (*model.User, error) {
 		return nil, err
 	}
 
-	currentUser := model.User{
+	newUser := model.User{
 		Email:    userDto.Email,
 		Name:     userDto.Name,
 		Password: hashedPassword,
 	}
-	result := u.db.Create(&currentUser)
+	result := u.db.Create(&newUser)
 	if result.Error != nil {
 		return nil, result.Error
 	}
 
-	err = u.mailUC.GenerateActivateLink(currentUser.ID, currentUser.Email, userDto.WhereSendLink)
+	currentUser := model.UserAndTokens{
+		User: newUser,
+	}
+
+	err = generateTokens(&currentUser, u.cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	err = u.mailUC.GenerateActivateLink(currentUser.ID, currentUser.Email, userDto.RedirectActiveEmail)
 	if err != nil {
 		logging.Error(u.ctx, err)
+		return nil, err
 	}
 
 	return &currentUser, nil
 }
 
 func (u *UserUC) FindByID(id string) (*model.User, error) {
-	var candidateUser model.User
-	result := u.db.Where("id = ?", id).First(&candidateUser)
+	var currentUser model.User
+	result := u.db.Where("id = ?", id).First(&currentUser)
 	if result.RowsAffected == 0 {
 		return nil, errors.New("user not found")
 	}
 
-	return &candidateUser, nil
+	return &currentUser, nil
 }
 
-func (u *UserUC) FindByEmail(email string) (*model.User, bool) {
+func (u *UserUC) FindByEmail(email string) *model.User {
 	var currentUser model.User
 	result := u.db.Where("email = ?", email).First(&currentUser)
-
 	if result.RowsAffected == 0 {
-		return nil, true
+		return nil
 	}
 
-	return &currentUser, false
+	return &currentUser
 }
 
-func (u *UserUC) Authorization(userDto dto.UserAuthorizationDTO) (*model.User, error) {
-	candidateUser, isUser := u.FindByEmail(userDto.Email)
-	if isUser {
+func (u *UserUC) Authorization(userDto dto.UserAuthorizationDTO) (*model.UserAndTokens, error) {
+	existsUser := u.FindByEmail(userDto.Email)
+	if existsUser == nil {
 		return nil, errors.New(fmt.Sprintf("user with mail %s not found", userDto.Email))
 	}
 
-	isPasswordHash := checkPasswordHash(candidateUser.Password, userDto.Password)
+	currentUser := &model.UserAndTokens{
+		User: *existsUser,
+	}
+
+	isPasswordHash := checkPasswordHash(existsUser.Password, userDto.Password)
 	if !isPasswordHash {
 		return nil, errors.New("incorrect password")
 	}
 
-	return candidateUser, nil
+	err := generateTokens(currentUser, u.cfg)
+	if err != nil {
+		return nil, err
+	}
+
+	return currentUser, nil
 }
 
 func (u *UserUC) BanUser(userDto dto.UserBanDTO) (bool, error) {
@@ -120,4 +140,11 @@ func (u *UserUC) ActivateEmail(linkID string) (bool, error) {
 	}
 
 	return true, nil
+}
+
+func (u *UserUC) FindAll() []*model.User {
+	users := make([]*model.User, 0)
+	u.db.Find(&users)
+
+	return users
 }

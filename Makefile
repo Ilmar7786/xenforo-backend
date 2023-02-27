@@ -20,8 +20,4 @@ clean:
 
 .PHONY: swagger
 swagger:
-	swag init -g ./app/main.go -o ./app/docs
-
-.PHONY: migrate
-migrate:
-	go run ./app/cmd/migrations/main.go
+	swag init -g ./app/cmd/app/main.go -o ./docs

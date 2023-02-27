@@ -37,6 +37,8 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 		gin.SetMode(gin.ReleaseMode)
 	}
 
+	router := gin.Default()
+
 	// Database postgresql
 	pgConfig := gorm_postgesql.NewConfig(
 		cfg.PostgreSQL.Username, cfg.PostgreSQL.Password, cfg.PostgreSQL.Host,
@@ -45,12 +47,12 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 	pgClient := gorm_postgesql.NewClient(pgConfig)
 
 	// Clients
-	fsClient := flashliveSports.NewFlashlightSportClient(ctx, cfg.FlashliveSports.Token)
+	fsClient := flashliveSports.NewFlashlightSportClient(ctx, cfg.FlashLiveSports.Token)
 
-	// UseCases
+	// Controller
 	logging.Info(ctx, "useCases initializing")
 	mailUC := MailUC.NewMailUseCase(ctx, cfg, pgClient)
-	userUC := UserUC.NewUserUseCase(ctx, pgClient, mailUC)
+	userUC := UserUC.NewUserUseCase(ctx, cfg, pgClient, mailUC)
 	sportUC := SportUC.NewSportsUseCase(ctx, fsClient)
 
 	// Middlewares
@@ -59,14 +61,10 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 
 	// Controllers
 	logging.Info(ctx, "controllers initializing")
-	router := gin.Default()
-	public := router.Group("/api")
-
-	routeUseCases := httpControllerV1.UseCases{
+	httpControllerV1.NewRouter(router, ctx, authMiddleware, httpControllerV1.Controller{
 		UserUC:  userUC,
 		SportUC: sportUC,
-	}
-	httpControllerV1.NewRouter(public, ctx, authMiddleware, routeUseCases)
+	})
 
 	return App{
 		cfg:    cfg,
