@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"errors"
 	"net/http"
 	"strings"
 	"xenforo/app/pkg/api"
@@ -10,20 +11,17 @@ import (
 
 func (i *Init) parseToken(c *gin.Context, privateKey string) (interface{}, error) {
 	var accessToken string
-	cookie, err := c.Cookie("access_token")
 
 	authorizationHeader := c.Request.Header.Get("Authorization")
 	fields := strings.Fields(authorizationHeader)
 
 	if len(fields) != 0 && fields[0] == "Bearer" {
 		accessToken = fields[1]
-	} else if err == nil {
-		accessToken = cookie
 	}
 
 	if accessToken == "" {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"message": "You are not logged in"})
-		return nil, err
+		return nil, errors.New("access token empty")
 	}
 
 	sub, err := api.ValidateToken(accessToken, privateKey)
