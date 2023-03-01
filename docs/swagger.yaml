@@ -1,4 +1,70 @@
 definitions:
+  app_internal_domain_event_model.Data:
+    properties:
+      CATEGORY_NAME:
+        type: string
+      COUNTRY_ID:
+        type: integer
+      COUNTRY_NAME:
+        type: string
+      EVENTS:
+        items:
+          $ref: '#/definitions/model.Event'
+        type: array
+      HAS_LIVE_TABLE:
+        type: integer
+      HEADER:
+        type: string
+      NAME:
+        type: string
+      NAME_PART_1:
+        type: string
+      NAME_PART_2:
+        type: string
+      SHORT_NAME:
+        type: string
+      SORT:
+        type: string
+      SOURCE_TYPE:
+        type: integer
+      STAGES_COUNT:
+        type: integer
+      STANDING_INFO:
+        type: integer
+      TEMPLATE_ID:
+        type: string
+      TOURNAMENT_ID:
+        type: string
+      TOURNAMENT_IMAGE:
+        type: string
+      TOURNAMENT_SEASON_ID:
+        type: string
+      TOURNAMENT_STAGE_ID:
+        type: string
+      TOURNAMENT_STAGE_TYPE:
+        type: integer
+      TOURNAMENT_TEMPLATE_ID:
+        type: string
+      TOURNAMENT_TYPE:
+        type: string
+      URL:
+        type: string
+      ZKL:
+        type: string
+      ZKU:
+        type: string
+    type: object
+  app_internal_domain_sport_model.Data:
+    properties:
+      EXTENDED_SPORTS:
+        items:
+          $ref: '#/definitions/model.ExtendedSports'
+        type: array
+      SPORTS:
+        items:
+          $ref: '#/definitions/model.Sport'
+        type: array
+    type: object
   dto.UserAuthorizationDTO:
     properties:
       email:
@@ -52,6 +118,190 @@ definitions:
         maxLength: 18
         minLength: 5
         type: string
+    type: object
+  model.Bookmakers:
+    properties:
+      BOOKMAKER_BETTING_TYPE:
+        type: integer
+      BOOKMAKER_ID:
+        type: integer
+      BOOKMAKER_NAME:
+        type: string
+    type: object
+  model.DatacoreTranslates:
+    type: object
+  model.Event:
+    properties:
+      AN:
+        type: string
+      AWAY_EVENT_PARTICIPANT_ID:
+        type: string
+      AWAY_GOAL_VAR:
+        type: integer
+      AWAY_IMAGES:
+        items:
+          type: string
+        type: array
+      AWAY_NAME:
+        type: string
+      AWAY_PARTICIPANT_IDS:
+        items:
+          type: string
+        type: array
+      AWAY_PARTICIPANT_NAME_ONE:
+        type: string
+      AWAY_PARTICIPANT_TYPES:
+        items:
+          type: integer
+        type: array
+      AWAY_SCORE_CURRENT:
+        type: string
+      AWAY_SCORE_PART_1:
+        type: string
+      AWAY_SCORE_PART_2:
+        type: string
+      BOOKMAKERS_WITH_LIVE_IN_OFFER:
+        items:
+          type: string
+        type: array
+      EVENT_ID:
+        type: string
+      GAME_TIME: {}
+      HAS_LINEPS:
+        type: integer
+      HAS_LIVE_CENTRE:
+        type: integer
+      HOME_EVENT_PARTICIPANT_ID:
+        type: string
+      HOME_GOAL_VAR:
+        type: integer
+      HOME_IMAGES:
+        items:
+          type: string
+        type: array
+      HOME_NAME:
+        type: string
+      HOME_PARTICIPANT_IDS:
+        items:
+          type: string
+        type: array
+      HOME_PARTICIPANT_NAME_ONE:
+        type: string
+      HOME_PARTICIPANT_TYPES:
+        items:
+          type: integer
+        type: array
+      HOME_SCORE_CURRENT:
+        type: string
+      HOME_SCORE_PART_1:
+        type: string
+      HOME_SCORE_PART_2:
+        type: string
+      IME:
+        type: string
+      IMM:
+        type: string
+      IMP:
+        type: string
+      IMW:
+        type: string
+      LIVE_IN_OFFER_BOOKMAKER_ID:
+        type: integer
+      LIVE_IN_OFFER_STATUS:
+        type: integer
+      LIVE_MARK:
+        type: string
+      MERGE_STAGE_TYPE:
+        type: string
+      PLAYING_ON_SETS: {}
+      RECENT_OVERS: {}
+      ROUND:
+        type: string
+      SHORTNAME_AWAY:
+        type: string
+      SHORTNAME_HOME:
+        type: string
+      SORT:
+        type: string
+      STAGE:
+        type: string
+      STAGE_START_TIME:
+        type: integer
+      STAGE_TYPE:
+        type: string
+      START_TIME:
+        type: integer
+      START_UTIME:
+        type: integer
+      TV_LIVE_STREAMING:
+        $ref: '#/definitions/model.TvLiveStreaming'
+      VISIBLE_RUN_RATE:
+        type: integer
+    type: object
+  model.ExtendedSports:
+    properties:
+      SPORT_ID_FOR_EXTENDED_INFO:
+        type: integer
+      SPORT_SORT:
+        type: integer
+    type: object
+  model.LiveEventData:
+    properties:
+      DATA:
+        items:
+          $ref: '#/definitions/app_internal_domain_event_model.Data'
+        type: array
+      LAST_CHANGE_KEY:
+        type: string
+      META:
+        $ref: '#/definitions/model.Meta'
+    type: object
+  model.Meta:
+    properties:
+      BOOKMAKERS:
+        items:
+          $ref: '#/definitions/model.Bookmakers'
+        type: array
+      DATACORE_TRANSLATES:
+        $ref: '#/definitions/model.DatacoreTranslates'
+    type: object
+  model.Num2:
+    properties:
+      BI:
+        type: integer
+      BN:
+        type: string
+      BT:
+        type: string
+      BU:
+        type: string
+      IU:
+        type: string
+    type: object
+  model.Sport:
+    properties:
+      EVENTS_COUNT:
+        type: integer
+      EVENTS_COUNT_LIVE:
+        type: integer
+      IS_POPULAR:
+        type: integer
+      SPORT_ID:
+        type: integer
+      SPORT_NAME:
+        type: string
+    type: object
+  model.SportData:
+    properties:
+      DATA:
+        $ref: '#/definitions/app_internal_domain_sport_model.Data'
+    type: object
+  model.TvLiveStreaming:
+    properties:
+      "2":
+        items:
+          $ref: '#/definitions/model.Num2'
+        type: array
     type: object
   model.User:
     properties:
@@ -183,6 +433,69 @@ paths:
       summary: Бан
       tags:
       - admin
+  /events:
+    get:
+      consumes:
+      - application/json
+      parameters:
+      - description: id спорта
+        in: query
+        name: sportID
+        type: string
+      - description: Часовой пояс
+        in: query
+        name: timeZone
+        type: string
+      - description: ID спорта
+        in: query
+        name: locale
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.LiveEventData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      summary: Список живых событий
+      tags:
+      - events
+  /sports:
+    get:
+      consumes:
+      - application/json
+      description: Получить данные о виде спорта и количестве спортивных событий
+      parameters:
+      - description: Язык
+        in: query
+        name: locale
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/model.SportData'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "500":
+          description: Internal Server Error
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+      summary: Список спортивных мероприятий
+      tags:
+      - sports
   /users/info:
     get:
       consumes:
@@ -195,6 +508,14 @@ paths:
           description: OK
           schema:
             $ref: '#/definitions/model.User'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "401":
+          description: Unauthorized
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
       security:
       - ApiKeyAuth: []
       summary: Информация о пользователи
@@ -221,6 +542,10 @@ paths:
             $ref: '#/definitions/model.User'
         "400":
           description: Bad Request
+          schema:
+            $ref: '#/definitions/v1.errorResponse'
+        "401":
+          description: Unauthorized
           schema:
             $ref: '#/definitions/v1.errorResponse'
       security:

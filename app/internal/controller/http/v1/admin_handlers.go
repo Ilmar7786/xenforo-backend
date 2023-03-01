@@ -26,10 +26,10 @@ func newAdminHandler(ctx context.Context, userUC user.UseCase) *adminHandler {
 // @Security ApiKeyAuth
 // @Tags admin
 // @Description Блокировка и разблокировка пользователя
-// @Accept json
+// @Accept 	json
 // @Produce json
-// @Param input body dto.UserBanDTO true "credentials"
-// @Param user_id path string true "ID пользователя"
+// @Param 	input 		body dto.UserBanDTO true "credentials"
+// @Param 	user_id 	path string true "ID пользователя"
 // @Success 200 {boolean} true
 // @Failure 400 {object} errorResponse
 // @Failure 401 {object} errorResponse
@@ -60,10 +60,10 @@ func (a *adminHandler) userBan(c *gin.Context) {
 
 // @Summary Список пользователей
 // @Security ApiKeyAuth
-// @Tags admin
-// @Accept json
+// @Tags 	admin
+// @Accept 	json
 // @Produce json
-// @Success 200 {array} model.User
+// @Success 200 {array}  model.User
 // @Failure 400 {object} errorResponse
 // @Failure 401 {object} errorResponse
 // @Failure 403 {object} errorResponse

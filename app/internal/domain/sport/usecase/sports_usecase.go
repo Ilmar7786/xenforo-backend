@@ -2,7 +2,6 @@ package usecase
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"xenforo/app/internal/domain/sport"
@@ -10,6 +9,8 @@ import (
 	"xenforo/app/pkg/client/flashliveSports"
 	"xenforo/app/pkg/logging"
 )
+
+const baseRoute = "/sports"
 
 type (
 	SportsUC struct {
@@ -25,22 +26,15 @@ func NewSportsUseCase(ctx context.Context, client *flashliveSports.Client) sport
 	}
 }
 
-func (s *SportsUC) NumberSportEvents() *model.SportData {
-	res, err := s.flashliveSports.Request(http.MethodGet, "sports/events-count", &flashliveSports.Filter{
-		Locale:   "ru_RU",
-		TimeZone: "+3",
-	})
-	if err != nil {
-		logging.Error(s.ctx, err)
-		return nil
-	}
-
+func (s *SportsUC) NumberSportEvents(sportID string) (*model.SportData, error) {
 	var sports model.SportData
-	err = json.Unmarshal(res, &sports)
+
+	s.flashliveSports.AddQuery("sport_id", sportID)
+	err := s.flashliveSports.Request(http.MethodGet, baseRoute+"/events-count", &sports)
 	if err != nil {
 		logging.Error(s.ctx, err)
-		return nil
+		return nil, err
 	}
 
-	return &sports
+	return &sports, nil
 }

@@ -3,5 +3,5 @@ package sport
 import "xenforo/app/internal/domain/sport/model"
 
 type UseCase interface {
-	NumberSportEvents() *model.SportData
+	NumberSportEvents(sportID string) (*model.SportData, error)
 }

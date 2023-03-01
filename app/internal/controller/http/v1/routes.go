@@ -2,6 +2,9 @@ package v1
 
 import (
 	"context"
+
+	"xenforo/app/internal/config"
+	"xenforo/app/internal/domain/event"
 	"xenforo/docs"
 
 	"xenforo/app/internal/domain/auth/middleware"
@@ -16,15 +19,20 @@ import (
 type Controller struct {
 	UserUC  user.UseCase
 	SportUC sport.UseCase
+	EventUC event.UseCase
 }
 
 const prefix = "/api"
 
 func NewRouter(router *gin.Engine, ctx context.Context, middleware middleware.Init, controller Controller) {
+	cfg := config.GetConfig(ctx)
+
 	public := router.Group(prefix + "/v1")
 	{
-		public.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-		docs.SwaggerInfo.BasePath = public.BasePath()
+		if cfg.App.IsDebug {
+			public.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+			docs.SwaggerInfo.BasePath = public.BasePath()
+		}
 
 		users := public.Group("/users")
 		{
@@ -41,6 +49,12 @@ func NewRouter(router *gin.Engine, ctx context.Context, middleware middleware.In
 		{
 			h := newSportHandler(ctx, controller.SportUC)
 			sports.GET("/", h.GetList)
+		}
+
+		events := public.Group("/events")
+		{
+			h := newEventHandler(ctx, controller.EventUC)
+			events.GET("/", h.GetList)
 		}
 	}
 

@@ -131,6 +131,103 @@ const docTemplate = `{
                 }
             }
         },
+        "/events": {
+            "get": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "events"
+                ],
+                "summary": "Список живых событий",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "id спорта",
+                        "name": "sportID",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "Часовой пояс",
+                        "name": "timeZone",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "ID спорта",
+                        "name": "locale",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.LiveEventData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/sports": {
+            "get": {
+                "description": "Получить данные о виде спорта и количестве спортивных событий",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "sports"
+                ],
+                "summary": "Список спортивных мероприятий",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Язык",
+                        "name": "locale",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/model.SportData"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    }
+                }
+            }
+        },
         "/users/info": {
             "get": {
                 "security": [
@@ -154,6 +251,18 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/model.User"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
                         }
                     }
                 }
@@ -197,6 +306,12 @@ const docTemplate = `{
                     },
                     "400": {
                         "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/v1.errorResponse"
+                        }
+                    },
+                    "401": {
+                        "description": "Unauthorized",
                         "schema": {
                             "$ref": "#/definitions/v1.errorResponse"
                         }
@@ -285,6 +400,106 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "app_internal_domain_event_model.Data": {
+            "type": "object",
+            "properties": {
+                "CATEGORY_NAME": {
+                    "type": "string"
+                },
+                "COUNTRY_ID": {
+                    "type": "integer"
+                },
+                "COUNTRY_NAME": {
+                    "type": "string"
+                },
+                "EVENTS": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Event"
+                    }
+                },
+                "HAS_LIVE_TABLE": {
+                    "type": "integer"
+                },
+                "HEADER": {
+                    "type": "string"
+                },
+                "NAME": {
+                    "type": "string"
+                },
+                "NAME_PART_1": {
+                    "type": "string"
+                },
+                "NAME_PART_2": {
+                    "type": "string"
+                },
+                "SHORT_NAME": {
+                    "type": "string"
+                },
+                "SORT": {
+                    "type": "string"
+                },
+                "SOURCE_TYPE": {
+                    "type": "integer"
+                },
+                "STAGES_COUNT": {
+                    "type": "integer"
+                },
+                "STANDING_INFO": {
+                    "type": "integer"
+                },
+                "TEMPLATE_ID": {
+                    "type": "string"
+                },
+                "TOURNAMENT_ID": {
+                    "type": "string"
+                },
+                "TOURNAMENT_IMAGE": {
+                    "type": "string"
+                },
+                "TOURNAMENT_SEASON_ID": {
+                    "type": "string"
+                },
+                "TOURNAMENT_STAGE_ID": {
+                    "type": "string"
+                },
+                "TOURNAMENT_STAGE_TYPE": {
+                    "type": "integer"
+                },
+                "TOURNAMENT_TEMPLATE_ID": {
+                    "type": "string"
+                },
+                "TOURNAMENT_TYPE": {
+                    "type": "string"
+                },
+                "URL": {
+                    "type": "string"
+                },
+                "ZKL": {
+                    "type": "string"
+                },
+                "ZKU": {
+                    "type": "string"
+                }
+            }
+        },
+        "app_internal_domain_sport_model.Data": {
+            "type": "object",
+            "properties": {
+                "EXTENDED_SPORTS": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.ExtendedSports"
+                    }
+                },
+                "SPORTS": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Sport"
+                    }
+                }
+            }
+        },
         "dto.UserAuthorizationDTO": {
             "type": "object",
             "properties": {
@@ -354,6 +569,285 @@ const docTemplate = `{
                     "type": "string",
                     "maxLength": 18,
                     "minLength": 5
+                }
+            }
+        },
+        "model.Bookmakers": {
+            "type": "object",
+            "properties": {
+                "BOOKMAKER_BETTING_TYPE": {
+                    "type": "integer"
+                },
+                "BOOKMAKER_ID": {
+                    "type": "integer"
+                },
+                "BOOKMAKER_NAME": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.DatacoreTranslates": {
+            "type": "object"
+        },
+        "model.Event": {
+            "type": "object",
+            "properties": {
+                "AN": {
+                    "type": "string"
+                },
+                "AWAY_EVENT_PARTICIPANT_ID": {
+                    "type": "string"
+                },
+                "AWAY_GOAL_VAR": {
+                    "type": "integer"
+                },
+                "AWAY_IMAGES": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "AWAY_NAME": {
+                    "type": "string"
+                },
+                "AWAY_PARTICIPANT_IDS": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "AWAY_PARTICIPANT_NAME_ONE": {
+                    "type": "string"
+                },
+                "AWAY_PARTICIPANT_TYPES": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "AWAY_SCORE_CURRENT": {
+                    "type": "string"
+                },
+                "AWAY_SCORE_PART_1": {
+                    "type": "string"
+                },
+                "AWAY_SCORE_PART_2": {
+                    "type": "string"
+                },
+                "BOOKMAKERS_WITH_LIVE_IN_OFFER": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "EVENT_ID": {
+                    "type": "string"
+                },
+                "GAME_TIME": {},
+                "HAS_LINEPS": {
+                    "type": "integer"
+                },
+                "HAS_LIVE_CENTRE": {
+                    "type": "integer"
+                },
+                "HOME_EVENT_PARTICIPANT_ID": {
+                    "type": "string"
+                },
+                "HOME_GOAL_VAR": {
+                    "type": "integer"
+                },
+                "HOME_IMAGES": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "HOME_NAME": {
+                    "type": "string"
+                },
+                "HOME_PARTICIPANT_IDS": {
+                    "type": "array",
+                    "items": {
+                        "type": "string"
+                    }
+                },
+                "HOME_PARTICIPANT_NAME_ONE": {
+                    "type": "string"
+                },
+                "HOME_PARTICIPANT_TYPES": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "HOME_SCORE_CURRENT": {
+                    "type": "string"
+                },
+                "HOME_SCORE_PART_1": {
+                    "type": "string"
+                },
+                "HOME_SCORE_PART_2": {
+                    "type": "string"
+                },
+                "IME": {
+                    "type": "string"
+                },
+                "IMM": {
+                    "type": "string"
+                },
+                "IMP": {
+                    "type": "string"
+                },
+                "IMW": {
+                    "type": "string"
+                },
+                "LIVE_IN_OFFER_BOOKMAKER_ID": {
+                    "type": "integer"
+                },
+                "LIVE_IN_OFFER_STATUS": {
+                    "type": "integer"
+                },
+                "LIVE_MARK": {
+                    "type": "string"
+                },
+                "MERGE_STAGE_TYPE": {
+                    "type": "string"
+                },
+                "PLAYING_ON_SETS": {},
+                "RECENT_OVERS": {},
+                "ROUND": {
+                    "type": "string"
+                },
+                "SHORTNAME_AWAY": {
+                    "type": "string"
+                },
+                "SHORTNAME_HOME": {
+                    "type": "string"
+                },
+                "SORT": {
+                    "type": "string"
+                },
+                "STAGE": {
+                    "type": "string"
+                },
+                "STAGE_START_TIME": {
+                    "type": "integer"
+                },
+                "STAGE_TYPE": {
+                    "type": "string"
+                },
+                "START_TIME": {
+                    "type": "integer"
+                },
+                "START_UTIME": {
+                    "type": "integer"
+                },
+                "TV_LIVE_STREAMING": {
+                    "$ref": "#/definitions/model.TvLiveStreaming"
+                },
+                "VISIBLE_RUN_RATE": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.ExtendedSports": {
+            "type": "object",
+            "properties": {
+                "SPORT_ID_FOR_EXTENDED_INFO": {
+                    "type": "integer"
+                },
+                "SPORT_SORT": {
+                    "type": "integer"
+                }
+            }
+        },
+        "model.LiveEventData": {
+            "type": "object",
+            "properties": {
+                "DATA": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/app_internal_domain_event_model.Data"
+                    }
+                },
+                "LAST_CHANGE_KEY": {
+                    "type": "string"
+                },
+                "META": {
+                    "$ref": "#/definitions/model.Meta"
+                }
+            }
+        },
+        "model.Meta": {
+            "type": "object",
+            "properties": {
+                "BOOKMAKERS": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Bookmakers"
+                    }
+                },
+                "DATACORE_TRANSLATES": {
+                    "$ref": "#/definitions/model.DatacoreTranslates"
+                }
+            }
+        },
+        "model.Num2": {
+            "type": "object",
+            "properties": {
+                "BI": {
+                    "type": "integer"
+                },
+                "BN": {
+                    "type": "string"
+                },
+                "BT": {
+                    "type": "string"
+                },
+                "BU": {
+                    "type": "string"
+                },
+                "IU": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.Sport": {
+            "type": "object",
+            "properties": {
+                "EVENTS_COUNT": {
+                    "type": "integer"
+                },
+                "EVENTS_COUNT_LIVE": {
+                    "type": "integer"
+                },
+                "IS_POPULAR": {
+                    "type": "integer"
+                },
+                "SPORT_ID": {
+                    "type": "integer"
+                },
+                "SPORT_NAME": {
+                    "type": "string"
+                }
+            }
+        },
+        "model.SportData": {
+            "type": "object",
+            "properties": {
+                "DATA": {
+                    "$ref": "#/definitions/app_internal_domain_sport_model.Data"
+                }
+            }
+        },
+        "model.TvLiveStreaming": {
+            "type": "object",
+            "properties": {
+                "2": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/model.Num2"
+                    }
                 }
             }
         },

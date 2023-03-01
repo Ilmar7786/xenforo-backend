@@ -10,7 +10,8 @@ import (
 
 	"xenforo/app/internal/config"
 	httpControllerV1 "xenforo/app/internal/controller/http/v1"
-	"xenforo/app/internal/domain/auth/middleware"
+	AuthMiddleware "xenforo/app/internal/domain/auth/middleware"
+	EventUC "xenforo/app/internal/domain/event/usecase"
 	MailUC "xenforo/app/internal/domain/mail/usecase"
 	SportUC "xenforo/app/internal/domain/sport/usecase"
 	UserUC "xenforo/app/internal/domain/user/usecase"
@@ -54,16 +55,18 @@ func NewApp(ctx context.Context, cfg *config.Config) (App, error) {
 	mailUC := MailUC.NewMailUseCase(ctx, cfg, pgClient)
 	userUC := UserUC.NewUserUseCase(ctx, cfg, pgClient, mailUC)
 	sportUC := SportUC.NewSportsUseCase(ctx, fsClient)
+	eventUC := EventUC.NewEventUseCase(ctx, fsClient)
 
 	// Middlewares
 	logging.Info(ctx, "middlewares initializing")
-	authMiddleware := middleware.NewAuth(ctx, cfg.App.Jwt.AccessTokenPrivateKey, userUC)
+	authMiddleware := AuthMiddleware.NewAuth(ctx, cfg.App.Jwt.AccessTokenPrivateKey, userUC)
 
 	// Controllers
 	logging.Info(ctx, "controllers initializing")
 	httpControllerV1.NewRouter(router, ctx, authMiddleware, httpControllerV1.Controller{
 		UserUC:  userUC,
 		SportUC: sportUC,
+		EventUC: eventUC,
 	})
 
 	return App{

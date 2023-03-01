@@ -1,6 +1,12 @@
 package flashliveSports
 
+const (
+	DefaultLocale   = "ru_RU"
+	DefaultTimeZone = "+3"
+)
+
 type Filter struct {
-	Locale   TypeLocale
+	Locale   string
 	TimeZone string
+	SportID  string
 }

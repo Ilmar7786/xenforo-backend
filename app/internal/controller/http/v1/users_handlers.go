@@ -3,6 +3,7 @@ package v1
 import (
 	"context"
 	"net/http"
+
 	"xenforo/app/pkg/api"
 
 	"xenforo/app/internal/domain/user"
@@ -25,10 +26,10 @@ func newUserHandler(ctx context.Context, userUC user.UseCase) *usersHandler {
 }
 
 // @Summary Авторизация
-// @Tags users
-// @Accept json
+// @Tags 	users
+// @Accept 	json
 // @Produce json
-// @Param input body dto.UserAuthorizationDTO true "credentials"
+// @Param 	input body   dto.UserAuthorizationDTO true "credentials"
 // @Success 200 {object} model.UserAndTokens
 // @Failure 400 {object} errorResponse
 // @Router /users/sign-in [post]
@@ -49,11 +50,11 @@ func (r *usersHandler) signIn(c *gin.Context) {
 }
 
 // @Summary Регистрация
-// @Tags users
+// @Tags 	users
 // @Description <b>RedirectActiveEmail</b> - ссылка редиректа для активации почты. Эта ссылка указывается в письме
-// @Accept json
+// @Accept 	json
 // @Produce json
-// @Param input body dto.UserRegistrationDTO true "credentials"
+// @Param 	input body   dto.UserRegistrationDTO true "credentials"
 // @Success 200 {object} model.UserAndTokens
 // @Failure 400 {object} errorResponse
 // @Router /users/sign-up [post]
@@ -77,9 +78,9 @@ func (r *usersHandler) signUp(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Tags users
 // @Description Обновления атрибутов пользователя
-// @Accept json
+// @Accept 	json
 // @Produce json
-// @Param input body dto.UserUpdateDTO true "credentials"
+// @Param 	input body dto.UserUpdateDTO true "credentials"
 // @Success 200 {object} model.User
 // @Failure 400 {object} errorResponse
 // @Failure 401 {object} errorResponse
@@ -93,7 +94,7 @@ func (r *usersHandler) updateProfile(c *gin.Context) {
 // @Security ApiKeyAuth
 // @Tags users
 // @Description Данные о пользователе
-// @Accept json
+// @Accept 	json
 // @Produce json
 // @Success 200 {object} model.User
 // @Failure 400 {object} errorResponse
